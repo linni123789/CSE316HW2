@@ -102,6 +102,60 @@ class App extends Component {
     };
     return newToDoListItem;
   }
+  
+  moveItemUp = (id) => {
+    let items = this.state.currentList.items;
+    var index;
+    for (var i = 0 ; i < items.length ; i++){
+      if (items[i].id == id){
+          index = i;
+      }
+    }
+    if (index >0){
+      var temp = items[index-1];
+      items[index-1] = items[index];
+      items[index] = temp;
+      this.setState({
+        currentList : {items}
+      })
+    }
+  }
+
+
+  moveItemDown = (id) => {
+    let items = this.state.currentList.items;
+    var index;
+    for (var i = 0 ; i < items.length ; i++){
+      if (items[i].id == id){
+          index = i;
+      }
+    }
+    if (index < items.length - 1){
+      var temp = items[index+1];
+      items[index+1] = items[index];
+      items[index] = temp;
+      this.setState({
+        currentList : {items}
+      })
+    }
+  }
+
+  deleteItem = (id) => {
+    let items = this.state.currentList.items;
+    var index;
+    for (var i = 0 ; i < items.length ; i++){
+      if (items[i].id == id){
+          index = i;
+      }
+    }
+    items = items.splice(1,i);
+    this.setState({
+      currentList : {items}
+    })
+  }
+
+  closeList = () => {
+  }
 
   // THIS IS A CALLBACK FUNCTION FOR AFTER AN EDIT TO A LIST
   afterToDoListsChangeComplete = () => {
@@ -121,8 +175,16 @@ class App extends Component {
           toDoLists={this.state.toDoLists}
           loadToDoListCallback={this.loadToDoList}
           addNewListCallback={this.addNewList}
+
         />
-        <Workspace toDoListItems={items} />
+        <Workspace 
+          toDoListItems={items} 
+          moveItemUpCallBack = {this.moveItemUp}
+          moveItemDownCallBack = {this.moveItemDown}
+          deleteItemCallBack = {this.deleteItem}
+          closeListCallBack = {this.closeList}
+          makeNewToDoListItemCallBack = {this.makeNewToDoListItem}
+          />
       </div>
     );
   }
