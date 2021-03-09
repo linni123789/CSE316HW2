@@ -22,15 +22,18 @@ class Workspace extends Component {
                     <div className="item-col" display="flex" flexDirection="row" flexWrap="nowrap">
                         <Undo id="undo-button" className="list-item-control material-icons todo-button" />
                         <Redo id="redo-button" className="list-item-control material-icons todo-button" />
-                        <AddBox id="add-item-button" className="list-item-control material-icons todo-button" />
-                        <Delete id="delete-list-button" className="list-item-control material-icons todo-button" />
-                        <Close id="close-list-button" className="list-item-control material-icons todo-button" />
+                        <AddBox id="add-item-button" className="list-item-control material-icons todo-button" onClick = {this.props.makeNewToDoListItemCallBack}/>
+                        <Delete id="delete-list-button" className="list-item-control material-icons todo-button" onClick = {this.props.deleteListCallBack}/>
+                        <Close id="close-list-button" className="list-item-control material-icons todo-button" onClick = {this.props.closeListCallBack}/>
                     </div>
                 </div>
                 <div id="todo-list-items-div">
                     {
                         this.props.toDoListItems.map((toDoListItem) => (
                         <ToDoItem
+                            moveItemUpCallBack = {this.props.moveItemUpCallBack}
+                            moveItemDownCallBack = {this.props.moveItemDownCallBack}
+                            deleteItemCallBack = {this.props.deleteItemCallBack}
                             key={toDoListItem.id}
                             toDoListItem={toDoListItem}     // PASS THE ITEM TO THE CHILDREN
                         />))

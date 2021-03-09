@@ -98,8 +98,15 @@ class App extends Component {
     let newToDoListItem = {
       description: "No Description",
       dueDate: "none",
-      status: "incomplete"
+      status: "incomplete",
+      id: this.state.nextListItemId+1
     };
+    let items = this.state.currentList.items;
+    items.push(newToDoListItem);
+    this.setState({
+      currentList : {items},
+      nextListItemId : this.state.nextListItemId+1
+    })
     return newToDoListItem;
   }
   
@@ -142,19 +149,40 @@ class App extends Component {
 
   deleteItem = (id) => {
     let items = this.state.currentList.items;
+    console.log(items);
     var index;
     for (var i = 0 ; i < items.length ; i++){
       if (items[i].id == id){
           index = i;
       }
     }
-    items = items.splice(1,i);
+    console.log(index);
+    items.splice(index,1);
+    console.log(items);
     this.setState({
       currentList : {items}
     })
   }
 
   closeList = () => {
+    this.setState({
+      currentList : {items: []}
+    })
+  }
+
+  deleteList = () => {
+    let alllists = this.state.toDoLists;
+    var index;
+    for (var i = 0 ; i < alllists.length ; i++){
+      if (this.state.currentList.id == alllists[i].id){
+        index = i;
+      }
+    }
+    alllists.splice(index, 1);
+    this.setState({
+      currentList : {items: []},
+      toDoLists: alllists
+    })
   }
 
   // THIS IS A CALLBACK FUNCTION FOR AFTER AN EDIT TO A LIST
@@ -184,6 +212,7 @@ class App extends Component {
           deleteItemCallBack = {this.deleteItem}
           closeListCallBack = {this.closeList}
           makeNewToDoListItemCallBack = {this.makeNewToDoListItem}
+          deleteListCallBack = {this.deleteList}
           />
       </div>
     );
