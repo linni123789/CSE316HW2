@@ -110,3 +110,9 @@
 #add-item-button, #delete-list-button, #close-list-button {
     text-align: center;
 }
+
+input[type="text"], textarea {
+    color: #e9edf0;
+    background-color: #40454e; 
+  
+  }

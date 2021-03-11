@@ -7,6 +7,9 @@ import jsTPS from './common/jsTPS'
 import Navbar from './components/Navbar'
 import LeftSidebar from './components/LeftSidebar'
 import Workspace from './components/Workspace'
+import DeleteConfirm from './components/DeleteConfirm'
+import { Modal } from '@material-ui/core';
+
 {/*import ItemsListHeaderComponent from './components/ItemsListHeaderComponent'
 import ItemsListComponent from './components/ItemsListComponent'
 import ListsComponent from './components/ListsComponent'
@@ -21,7 +24,6 @@ class App extends Component {
 
     // MAKE OUR TRANSACTION PROCESSING SYSTEM
     this.tps = new jsTPS();
-
     // CHECK TO SEE IF THERE IS DATA IN LOCAL STORAGE FOR THIS APP
     let recentLists = localStorage.getItem("recentLists");
     console.log("recentLists: " + recentLists);
@@ -70,6 +72,9 @@ class App extends Component {
       toDoLists: nextLists,
       currentList: toDoList
     });
+    document.getElementById("add-item-button").style.color =  'white';
+    document.getElementById("delete-list-button").style.color = 'white';
+    document.getElementById("close-list-button").style.color = 'white';
   }
 
   addNewList = () => {
@@ -149,16 +154,13 @@ class App extends Component {
 
   deleteItem = (id) => {
     let items = this.state.currentList.items;
-    console.log(items);
     var index;
     for (var i = 0 ; i < items.length ; i++){
       if (items[i].id == id){
           index = i;
       }
     }
-    console.log(index);
     items.splice(index,1);
-    console.log(items);
     this.setState({
       currentList : {items}
     })
@@ -168,6 +170,9 @@ class App extends Component {
     this.setState({
       currentList : {items: []}
     })
+    document.getElementById("add-item-button").style.color = "black";
+    document.getElementById("delete-list-button").style.color = "black";
+    document.getElementById("close-list-button").style.color = "black";
   }
 
   deleteList = () => {
@@ -183,8 +188,41 @@ class App extends Component {
       currentList : {items: []},
       toDoLists: alllists
     })
+    document.getElementById("modal-overlay").style.display = 'none';
+    document.getElementById("add-item-button").style.color = "black";
+    document.getElementById("delete-list-button").style.color = "black";
+    document.getElementById("close-list-button").style.color = "black";
   }
 
+  checkDeleteList = () => {
+    document.getElementById("modal-overlay").style.display = 'block';
+  }
+
+  exitmodal = () => {
+    document.getElementById("modal-overlay").style.display = 'none';
+  }
+
+  changeTask = (id, text) => { 
+    let currentlist = this.state.currentList.items;
+    for (var i = 0 ; i < currentlist.length ; i ++){
+      if (currentlist[i].id === id)
+        currentlist[i].description = text;
+    }
+  }
+  changeDate = (id, date) => {
+    let currentlist = this.state.currentList.items;
+    for (var i = 0 ; i < currentlist.length ; i ++){
+      if (currentlist[i].id === id)
+        currentlist[i].date = date;
+    }
+  }
+  changeStatus = (id, status) => {
+    let currentlist = this.state.currentList.items;
+    for (var i = 0 ; i < currentlist.length ; i ++){
+      if (currentlist[i].id === id)
+        currentlist[i].status = status;
+    }
+  } 
   // THIS IS A CALLBACK FUNCTION FOR AFTER AN EDIT TO A LIST
   afterToDoListsChangeComplete = () => {
     console.log("App updated currentToDoList: " + this.state.currentList);
@@ -198,6 +236,10 @@ class App extends Component {
     let items = this.state.currentList.items;
     return (
       <div id="root">
+        <DeleteConfirm
+          deleteListCallBack = {this.deleteList}
+          exitmodalCallBack = {this.exitmodal}
+        />
         <Navbar />
         <LeftSidebar 
           toDoLists={this.state.toDoLists}
@@ -212,7 +254,10 @@ class App extends Component {
           deleteItemCallBack = {this.deleteItem}
           closeListCallBack = {this.closeList}
           makeNewToDoListItemCallBack = {this.makeNewToDoListItem}
-          deleteListCallBack = {this.deleteList}
+          checkdeleteListCallBack = {this.checkDeleteList}
+          changeTaskCallBack = {this.changeTask}
+          changeDateCallBack = {this.changeDate}
+          changeStatusCallBack = {this.changeStatus}
           />
       </div>
     );

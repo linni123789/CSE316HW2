@@ -23,7 +23,7 @@ class Workspace extends Component {
                         <Undo id="undo-button" className="list-item-control material-icons todo-button" />
                         <Redo id="redo-button" className="list-item-control material-icons todo-button" />
                         <AddBox id="add-item-button" className="list-item-control material-icons todo-button" onClick = {this.props.makeNewToDoListItemCallBack}/>
-                        <Delete id="delete-list-button" className="list-item-control material-icons todo-button" onClick = {this.props.deleteListCallBack}/>
+                        <Delete id="delete-list-button" className="list-item-control material-icons todo-button" onClick = {this.props.checkdeleteListCallBack}/>
                         <Close id="close-list-button" className="list-item-control material-icons todo-button" onClick = {this.props.closeListCallBack}/>
                     </div>
                 </div>
@@ -34,6 +34,9 @@ class Workspace extends Component {
                             moveItemUpCallBack = {this.props.moveItemUpCallBack}
                             moveItemDownCallBack = {this.props.moveItemDownCallBack}
                             deleteItemCallBack = {this.props.deleteItemCallBack}
+                            changeTaskCallBack  = {this.props.changeTaskCallBack}
+                            changeDateCallBack = {this.props.changeDateCallBack}
+                            changeStatusCallBack = {this.props.changeStatusCallBack}
                             key={toDoListItem.id}
                             toDoListItem={toDoListItem}     // PASS THE ITEM TO THE CHILDREN
                         />))

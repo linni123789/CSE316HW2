@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './css/todo_layout.css'
 import './css/todo_style.css'
+import './css/modal_style.css'
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
