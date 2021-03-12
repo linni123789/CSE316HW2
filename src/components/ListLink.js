@@ -21,7 +21,6 @@ class ListLink extends Component {
     render() {
         // DISPLAY WHERE WE ARE
         console.log("\t\t\tListLink render");
-
         return (
             <div 
                 className='todo-list-button'

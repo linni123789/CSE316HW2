@@ -11,7 +11,16 @@ class Workspace extends Component {
     constructor(props) {
         super(props);
     }
-
+    checkblack = (index) => {
+        if (index === 0){
+            return true;
+        }
+    }
+    checkdownblack = (index) => {
+        if (index === this.props.toDoListItems.length-1){
+            return true;
+        }
+    }
     render() {
         return (
             <div id="workspace">
@@ -20,8 +29,8 @@ class Workspace extends Component {
                     <div id="date-col-header" className="item-col todo-button">Due Date</div>
                     <div id="status-col-header" className="item-col todo-button">Status</div>
                     <div className="item-col" display="flex" flexDirection="row" flexWrap="nowrap">
-                        <Undo id="undo-button" className="list-item-control material-icons todo-button" />
-                        <Redo id="redo-button" className="list-item-control material-icons todo-button" />
+                        <Undo id="undo-button" className="list-item-control material-icons todo-button" onClick = {this.props.undoCallBack} />
+                        <Redo id="redo-button" className="list-item-control material-icons todo-button" onClick = {this.props.redoCallBack} />
                         <AddBox id="add-item-button" className="list-item-control material-icons todo-button" onClick = {this.props.makeNewToDoListItemCallBack}/>
                         <Delete id="delete-list-button" className="list-item-control material-icons todo-button" onClick = {this.props.checkdeleteListCallBack}/>
                         <Close id="close-list-button" className="list-item-control material-icons todo-button" onClick = {this.props.closeListCallBack}/>
@@ -29,14 +38,14 @@ class Workspace extends Component {
                 </div>
                 <div id="todo-list-items-div">
                     {
-                        this.props.toDoListItems.map((toDoListItem) => (
+                        this.props.toDoListItems.map((toDoListItem,index) => (
                         <ToDoItem
                             moveItemUpCallBack = {this.props.moveItemUpCallBack}
                             moveItemDownCallBack = {this.props.moveItemDownCallBack}
                             deleteItemCallBack = {this.props.deleteItemCallBack}
-                            changeTaskCallBack  = {this.props.changeTaskCallBack}
-                            changeDateCallBack = {this.props.changeDateCallBack}
-                            changeStatusCallBack = {this.props.changeStatusCallBack}
+                            changeItemCallBack  = {this.props.changeItemCallBack}
+                            black = {this.checkblack(index)}
+                            blackdown = {this.checkdownblack(index)}
                             key={toDoListItem.id}
                             toDoListItem={toDoListItem}     // PASS THE ITEM TO THE CHILDREN
                         />))

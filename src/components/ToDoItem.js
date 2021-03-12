@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import Close from '@material-ui/icons/Close';
+import { hexToRgb } from '@material-ui/core';
 
 class ToDoItem extends Component {
     constructor(props) {
@@ -21,7 +22,7 @@ class ToDoItem extends Component {
         console.log("\t\t\tToDoItem " + this.props.toDoListItem.id + " did mount");
     }
 
-    handleMoveItemUp = () => {
+    handleMoveItemUp = (event) => {
         this.props.moveItemUpCallBack(this.props.toDoListItem.id);
     }
     
@@ -29,23 +30,23 @@ class ToDoItem extends Component {
         this.props.moveItemDownCallBack(this.props.toDoListItem.id);
     }
     
-    handleDeleteItem = (id) => {
-        this.props.deleteItemCallBack(this.props.toDoListItem.id);
+    handleDeleteItem = (item) => {
+        this.props.deleteItemCallBack(this.props.toDoListItem);
     }
     handleTaskChange = (event) => {
-        this.props.changeTaskCallBack(this.props.toDoListItem.id, event.target.value);
+        this.props.changeItemCallBack(this.props.toDoListItem.id, event.target.value, this.props.toDoListItem.due_date, this.props.toDoListItem.status);
         this.setState({
             changingTask: false
         })
     }
     handleDateChange = (event) => {
-        this.props.changeDateCallBack(this.props.toDoListItem.id, event.target.value);
+        this.props.changeItemCallBack(this.props.toDoListItem.id, this.props.toDoListItem.description, event.target.value, this.props.toDoListItem.status);
         this.setState({
             changingDate: false
         })
     }
     handleStatusChange = (event) => {
-        this.props.changeStatusCallBack(this.props.toDoListItem.id, event.target.value);
+        this.props.changeItemCallBack(this.props.toDoListItem.id, this.props.toDoListItem.description, this.props.toDoListItem.due_date, event.target.value);
         this.setState({
             changingStatus: false
         })
@@ -69,6 +70,14 @@ class ToDoItem extends Component {
 
     render() {
         // DISPLAY WHERE WE ARE
+        let keyboardArrowUp = <KeyboardArrowUp className='list-item-control todo-button moveup' onClick={this.handleMoveItemUp}/>;
+        if (this.props.black === true){
+            keyboardArrowUp = <KeyboardArrowUp className='list-item-control todo-button moveup disable' onClick={this.handleMoveItemUp}/>
+        }
+        let keyboardArrowDown = <KeyboardArrowDown className='list-item-control todo-button movedown' onClick={this.handleMoveItemDown}/>
+        if(this.props.blackdown === true){
+            keyboardArrowDown = <KeyboardArrowDown className='list-item-control todo-button movedown disable' onClick={this.handleMoveItemDown}/>
+        }
         console.log("\t\t\tToDoItem render");
         let listItem = this.props.toDoListItem;
         let statusType = "status-complete";
@@ -94,8 +103,8 @@ class ToDoItem extends Component {
                 }
                 <div className='item-col test-4-col'></div>
                 <div className='item-col list-controls-col'>
-                    <KeyboardArrowUp className='list-item-control todo-button' onClick={this.handleMoveItemUp}/>
-                    <KeyboardArrowDown className='list-item-control todo-button' onClick={this.handleMoveItemDown} />
+                    {keyboardArrowUp}
+                    {keyboardArrowDown}
                     <Close className='list-item-control todo-button' onClick ={this.handleDeleteItem}/>
                     <div className='list-item-control'></div>
         <div className='list-item-control'></div>

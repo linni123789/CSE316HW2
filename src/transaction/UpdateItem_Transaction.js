@@ -4,7 +4,7 @@
 import { jsTPS_Transaction } from "../common/jsTPS.js"
 
 export default class UpdateItem_Transaction extends jsTPS_Transaction {
-    constructor(initModel, initItemId, initOldDescription, initNewDescription, initOldDueDate, initNewDueDate, initOldStatus, initNewStatus) {
+    constructor(initModel, initItemId, initNewDescription, initNewDueDate, initNewStatus,  initOldDescription, initOldDueDate,initOldStatus,) {
         super();
         this.model = initModel;
         this.itemId = initItemId;

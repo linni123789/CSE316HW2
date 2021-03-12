@@ -109,10 +109,46 @@
 
 #add-item-button, #delete-list-button, #close-list-button {
     text-align: center;
+    color:black;
+    pointer-events: none;
+}
+#undo-button, #redo-button {
+    color:black;
 }
 
+.disable {
+    color : black;
+    pointer-events: none;
+}
 input[type="text"], textarea {
     color: #e9edf0;
     background-color: #40454e; 
   
+}
+input[type="date"], textarea {
+    color: #e9edf0;
+    background-color: #40454e; 
+}
+select, textarea {
+    color: #e9edf0;
+    background-color: #40454e; 
+}
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
   }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

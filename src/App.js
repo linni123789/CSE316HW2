@@ -9,6 +9,13 @@ import LeftSidebar from './components/LeftSidebar'
 import Workspace from './components/Workspace'
 import DeleteConfirm from './components/DeleteConfirm'
 import { Modal } from '@material-ui/core';
+import AddNewItem_Transaction from './transaction/AddNewItem_Transaction'
+import Move_Down_Transaction from './transaction/Move_Down_Transaction'
+import Move_Up_Transaction from './transaction/Move_Up_Transaction'
+import DeleteItem_Transaction from './transaction/DeleteItem_Transaction'
+import UpdateItem_Transaction from './transaction/UpdateItem_Transaction'
+
+
 
 {/*import ItemsListHeaderComponent from './components/ItemsListHeaderComponent'
 import ItemsListComponent from './components/ItemsListComponent'
@@ -58,10 +65,45 @@ class App extends Component {
     }
   }
 
+  tpsAddNewItem_Transaction = () => {
+    var trans = new AddNewItem_Transaction(this);
+    this.tps.addTransaction(trans);
+  }
+  tpsMove_Down_Transaction = (id) => {
+    var trans = new Move_Down_Transaction(this,id);
+    this.tps.addTransaction(trans);
+  }
+  tpsMove_Up_Transaction = (id) => {
+    var trans = new Move_Up_Transaction(this,id);
+    this.tps.addTransaction(trans);
+  }
+  tpsDeleteItem_Transaction = (item) => {
+    let index;
+    for (var i = 0 ; i < this.state.currentList.items.length ; i++){
+        if (this.state.currentList.items[i].id == item.id){
+            index = i;
+        }
+    }
+    var trans = new DeleteItem_Transaction (this,item.id,item,index);
+    this.tps.addTransaction(trans);
+  }
+  tpsUpdateItem_Transaction = (id, description, date, status) => {
+    let list = this.state.currentList.items;
+    for (var i = 0 ; i < list.length ; i++){
+      if (list[i].id === id){
+        var oldDescription = list[i].description;
+        var oldDueDate = list[i].due_date;
+        var oldStatus = list[i].status;
+      }
+    }
+    var trans = new UpdateItem_Transaction(this, id, description, date, status, oldDescription, oldDueDate, oldStatus);
+    this.tps.addTransaction(trans);
+  }
+
+
   // WILL LOAD THE SELECTED LIST
   loadToDoList = (toDoList) => {
     console.log("loading " + toDoList);
-
     // MAKE SURE toDoList IS AT THE TOP OF THE STACK BY REMOVING THEN PREPENDING
     const nextLists = this.state.toDoLists.filter(testList =>
       testList.id !== toDoList.id
@@ -72,11 +114,41 @@ class App extends Component {
       toDoLists: nextLists,
       currentList: toDoList
     });
+    this.activatebuttons();
+    this.tps.clearAllTransactions();
+    if (this.tps.hasTransactionToRedo()){
+      document.getElementById("redo-button").style.color = 'white';
+    }
+    else{
+        document.getElementById("redo-button").style.color = 'black';
+    }
+    if (this.tps.hasTransactionToUndo()){
+        document.getElementById("undo-button").style.color = 'white';
+    }
+    else{
+        document.getElementById("undo-button").style.color = 'black';
+    }
+  }
+  activatebuttons = () => {
     document.getElementById("add-item-button").style.color =  'white';
     document.getElementById("delete-list-button").style.color = 'white';
     document.getElementById("close-list-button").style.color = 'white';
+    document.getElementById("add-item-button").style.pointerEvents = 'auto';
+    document.getElementById("delete-list-button").style.pointerEvents = 'auto';
+    document.getElementById("close-list-button").style.pointerEvents = 'auto';
+    document.getElementById("add-list-button").style.color = 'yellow';
+    document.getElementById("add-list-button").style.pointerEvents = 'auto';
   }
-
+  disablebuttons = () => {
+    document.getElementById("add-item-button").style.color =  'black';
+    document.getElementById("delete-list-button").style.color = 'black';
+    document.getElementById("close-list-button").style.color = 'black';
+    document.getElementById("add-item-button").style.pointerEvents = 'none';
+    document.getElementById("delete-list-button").style.pointerEvents = 'none';
+    document.getElementById("close-list-button").style.pointerEvents = 'none';
+    document.getElementById("add-list-button").style.color = 'black';
+    document.getElementById("add-list-button").style.pointerEvents = 'none';
+  }
   addNewList = () => {
     let newToDoListInList = [this.makeNewToDoList()];
     let newToDoListsList = [...newToDoListInList, ...this.state.toDoLists];
@@ -88,6 +160,19 @@ class App extends Component {
       currentList: newToDoList,
       nextListId: this.state.nextListId+1
     }, this.afterToDoListsChangeComplete);
+    this.tps.clearAllTransactions();
+    if (this.hasTransactionToRedo()){
+      document.getElementById("redo-button").style.color = 'white';
+    }
+    else{
+        document.getElementById("redo-button").style.color = 'black';
+    }
+    if (this.hasTransactionToUndo()){
+        document.getElementById("undo-button").style.color = 'white';
+    }
+    else{
+        document.getElementById("undo-button").style.color = 'black';
+    }
   }
 
   makeNewToDoList = () => {
@@ -96,15 +181,28 @@ class App extends Component {
       name: 'Untitled',
       items: []
     };
+    this.tps.clearAllTransactions();
+    if (this.hasTransactionToRedo()){
+      document.getElementById("redo-button").style.color = 'white';
+    }
+    else{
+        document.getElementById("redo-button").style.color = 'black';
+    }
+    if (this.hasTransactionToUndo()){
+        document.getElementById("undo-button").style.color = 'white';
+    }
+    else{
+        document.getElementById("undo-button").style.color = 'black';
+    }
     return newToDoList;
   }
 
   makeNewToDoListItem = () =>  {
     let newToDoListItem = {
       description: "No Description",
-      dueDate: "none",
+      due_date: "No Date",
       status: "incomplete",
-      id: this.state.nextListItemId+1
+      id: this.state.nextListItemId
     };
     let items = this.state.currentList.items;
     items.push(newToDoListItem);
@@ -112,6 +210,7 @@ class App extends Component {
       currentList : {items},
       nextListItemId : this.state.nextListItemId+1
     })
+
     return newToDoListItem;
   }
   
@@ -170,9 +269,20 @@ class App extends Component {
     this.setState({
       currentList : {items: []}
     })
-    document.getElementById("add-item-button").style.color = "black";
-    document.getElementById("delete-list-button").style.color = "black";
-    document.getElementById("close-list-button").style.color = "black";
+    this.disablebuttons();
+    this.tps.clearAllTransactions();
+    if (this.tps.hasTransactionToRedo()){
+      document.getElementById("redo-button").style.color = 'white';
+    }
+    else{
+        document.getElementById("redo-button").style.color = 'black';
+    }
+    if (this.tps.hasTransactionToUndo()){
+        document.getElementById("undo-button").style.color = 'white';
+    }
+    else{
+        document.getElementById("undo-button").style.color = 'black';
+    }
   }
 
   deleteList = () => {
@@ -188,10 +298,21 @@ class App extends Component {
       currentList : {items: []},
       toDoLists: alllists
     })
-    document.getElementById("modal-overlay").style.display = 'none';
-    document.getElementById("add-item-button").style.color = "black";
-    document.getElementById("delete-list-button").style.color = "black";
-    document.getElementById("close-list-button").style.color = "black";
+    this.disablebuttons();
+    this.exitmodal();
+    this.tps.clearAllTransactions();
+    if (this.tps.hasTransactionToRedo()){
+      document.getElementById("redo-button").style.color = 'white';
+    }
+    else{
+        document.getElementById("redo-button").style.color = 'black';
+    }
+    if (this.tps.hasTransactionToUndo()){
+        document.getElementById("undo-button").style.color = 'white';
+    }
+    else{
+        document.getElementById("undo-button").style.color = 'black';
+    }
   }
 
   checkDeleteList = () => {
@@ -202,27 +323,34 @@ class App extends Component {
     document.getElementById("modal-overlay").style.display = 'none';
   }
 
-  changeTask = (id, text) => { 
-    let currentlist = this.state.currentList.items;
-    for (var i = 0 ; i < currentlist.length ; i ++){
-      if (currentlist[i].id === id)
-        currentlist[i].description = text;
+  changeItem = (id, text, date, status) => { 
+    let items = this.state.currentList.items;
+    for (var i = 0 ; i < items.length ; i ++){
+      if (items[i].id === id){
+        items[i].description = text;
+        items[i].due_date = date;
+        items[i].status = status;
+      }
     }
+    this.setState({
+      currentList: {items}
+    })
   }
-  changeDate = (id, date) => {
-    let currentlist = this.state.currentList.items;
-    for (var i = 0 ; i < currentlist.length ; i ++){
-      if (currentlist[i].id === id)
-        currentlist[i].date = date;
-    }
+
+  insertItem(item, index){
+    let list = this.state.currentList;
+    list.items.splice(index, 0, item);
+    this.setState({
+      currentList: list
+    })
   }
-  changeStatus = (id, status) => {
-    let currentlist = this.state.currentList.items;
-    for (var i = 0 ; i < currentlist.length ; i ++){
-      if (currentlist[i].id === id)
-        currentlist[i].status = status;
-    }
-  } 
+  undo = () =>{
+    this.tps.undoTransaction();
+  }
+  redo = () => {
+    this.tps.doTransaction();
+  }
+
   // THIS IS A CALLBACK FUNCTION FOR AFTER AN EDIT TO A LIST
   afterToDoListsChangeComplete = () => {
     console.log("App updated currentToDoList: " + this.state.currentList);
@@ -249,15 +377,15 @@ class App extends Component {
         />
         <Workspace 
           toDoListItems={items} 
-          moveItemUpCallBack = {this.moveItemUp}
-          moveItemDownCallBack = {this.moveItemDown}
-          deleteItemCallBack = {this.deleteItem}
+          moveItemUpCallBack = {this.tpsMove_Up_Transaction}
+          moveItemDownCallBack = {this.tpsMove_Down_Transaction}
+          deleteItemCallBack = {this.tpsDeleteItem_Transaction}
           closeListCallBack = {this.closeList}
-          makeNewToDoListItemCallBack = {this.makeNewToDoListItem}
+          makeNewToDoListItemCallBack = {this.tpsAddNewItem_Transaction}
           checkdeleteListCallBack = {this.checkDeleteList}
-          changeTaskCallBack = {this.changeTask}
-          changeDateCallBack = {this.changeDate}
-          changeStatusCallBack = {this.changeStatus}
+          changeItemCallBack = {this.tpsUpdateItem_Transaction}
+          undoCallBack = {this.undo}
+          redoCallBack = {this.redo}
           />
       </div>
     );
