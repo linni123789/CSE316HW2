@@ -12,6 +12,14 @@ class LeftSidebar extends Component {
         this.props.addNewListCallback();
     }
 
+    checkyellow = (id) => {
+        console.log(id);
+        console.log(this.props.currentList.id);
+        if (id === this.props.currentList.id){
+            console.log("tRUASADSDADASD");
+            return true;
+        }
+    }
     render() {
         return (
             <div id="left-sidebar">
@@ -28,7 +36,10 @@ class LeftSidebar extends Component {
                 {
                     this.props.toDoLists.map((toDoList) => (
                         <ListLink
+                            currentList = {this.props.currentList}
                             key={toDoList.id}
+                            yellow = {this.checkyellow(toDoList.id)}
+                            listNameChangeCallBack={this.props.listNameChangeCallBack}
                             toDoList={toDoList}                                // PASS THE LIST TO THE CHILDREN
                             loadToDoListCallback={this.props.loadToDoListCallback} />  // PASS THE CALLBACK TO THE CHILDREN
                     ))

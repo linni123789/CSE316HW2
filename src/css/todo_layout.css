@@ -55,7 +55,8 @@
 }
 
 #todo-lists-list {
-    position:absolute;
+    overflow-y: scroll;
+    position :absolute;
     text-align: center;
     height:80%;
     width:100%;
@@ -83,10 +84,30 @@
 }
 
 #todo-list-items-div {
+    overflow-y: scroll;
     height:96%;
     top:7%;
     display: flex;
     flex-direction: column;
+}
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .list-item-card {
@@ -100,13 +121,28 @@
     width:25%;
 }
 
-.list-controls-col {
-    /*display: flex;
-    flex-direction: row; 
-    flex-wrap: nowrap;*/
+.task-col {
+    width:25%;
+    word-wrap: break-word;
 }
 
+.due-date-col {
+    width:25%;
+}
+
+.status-col {
+    width:25%
+}
+
+.list-controls-col {
+    width:25%;
+    display: flex;
+    flex-direction: row;
+}
 .list-item-control {
     width: 20%;
+}
+.invisible {
+    display:none;
 }
 

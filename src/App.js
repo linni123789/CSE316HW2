@@ -28,7 +28,7 @@ class App extends Component {
 
     // DISPLAY WHERE WE ARE
     console.log("App constructor");
-
+    
     // MAKE OUR TRANSACTION PROCESSING SYSTEM
     this.tps = new jsTPS();
     // CHECK TO SEE IF THERE IS DATA IN LOCAL STORAGE FOR THIS APP
@@ -51,7 +51,7 @@ class App extends Component {
       for (let j = 0; j < toDoList.items.length; j++) {
         let toDoListItem = toDoList.items[j];
         if (toDoListItem.id > highListItemId)
-        highListItemId = toDoListItem.id;
+        highListItemId = toDoListItem.id
       }
     };
 
@@ -62,6 +62,19 @@ class App extends Component {
       nextListId: highListId+1,
       nextListItemId: highListItemId+1,
       useVerboseFeedback: true
+    }
+  }
+
+  componentDidMount = () => {
+    document.addEventListener("keydown", this.handleKey, false);
+  }
+
+  handleKey = (event) => {
+    if(event.key === "z" && event.ctrlKey){
+      this.undo();
+    }
+    if(event.key === "y" && event.ctrlKey ){
+      this.redo();
     }
   }
 
@@ -118,16 +131,22 @@ class App extends Component {
     this.tps.clearAllTransactions();
     if (this.tps.hasTransactionToRedo()){
       document.getElementById("redo-button").style.color = 'white';
+      document.getElementById("redo-button").style.pointerEvents = "auto";
     }
     else{
         document.getElementById("redo-button").style.color = 'black';
+        document.getElementById("redo-button").style.pointerEvents = "none";
     }
     if (this.tps.hasTransactionToUndo()){
         document.getElementById("undo-button").style.color = 'white';
+        document.getElementById("undo-button").style.pointerEvents = "auto";
     }
     else{
         document.getElementById("undo-button").style.color = 'black';
+        document.getElementById("undo-button").style.pointerEvents = "none";
     }
+    document.getElementById("add-list-button").style.color = 'black';
+    document.getElementById("add-list-button").style.pointerEvents = 'none';
   }
   activatebuttons = () => {
     document.getElementById("add-item-button").style.color =  'white';
@@ -136,8 +155,6 @@ class App extends Component {
     document.getElementById("add-item-button").style.pointerEvents = 'auto';
     document.getElementById("delete-list-button").style.pointerEvents = 'auto';
     document.getElementById("close-list-button").style.pointerEvents = 'auto';
-    document.getElementById("add-list-button").style.color = 'yellow';
-    document.getElementById("add-list-button").style.pointerEvents = 'auto';
   }
   disablebuttons = () => {
     document.getElementById("add-item-button").style.color =  'black';
@@ -146,14 +163,11 @@ class App extends Component {
     document.getElementById("add-item-button").style.pointerEvents = 'none';
     document.getElementById("delete-list-button").style.pointerEvents = 'none';
     document.getElementById("close-list-button").style.pointerEvents = 'none';
-    document.getElementById("add-list-button").style.color = 'black';
-    document.getElementById("add-list-button").style.pointerEvents = 'none';
   }
   addNewList = () => {
     let newToDoListInList = [this.makeNewToDoList()];
     let newToDoListsList = [...newToDoListInList, ...this.state.toDoLists];
     let newToDoList = newToDoListInList[0];
-
     // AND SET THE STATE, WHICH SHOULD FORCE A render
     this.setState({
       toDoLists: newToDoListsList,
@@ -161,38 +175,50 @@ class App extends Component {
       nextListId: this.state.nextListId+1
     }, this.afterToDoListsChangeComplete);
     this.tps.clearAllTransactions();
-    if (this.hasTransactionToRedo()){
+    if (this.tps.hasTransactionToRedo()){
       document.getElementById("redo-button").style.color = 'white';
+      document.getElementById("redo-button").style.pointerEvents = "auto";
     }
     else{
         document.getElementById("redo-button").style.color = 'black';
+        document.getElementById("redo-button").style.pointerEvents = "none";
     }
-    if (this.hasTransactionToUndo()){
+    if (this.tps.hasTransactionToUndo()){
         document.getElementById("undo-button").style.color = 'white';
+        document.getElementById("undo-button").style.pointerEvents = "auto";
     }
     else{
         document.getElementById("undo-button").style.color = 'black';
+        document.getElementById("undo-button").style.pointerEvents = "none";
     }
+    this.activatebuttons();
+    document.getElementById("add-list-button").style.color = 'black';
+    document.getElementById("add-list-button").style.pointerEvents = 'none';
+    console.log(this.state.toDoLists);
   }
 
   makeNewToDoList = () => {
     let newToDoList = {
-      id: this.highListId,
+      id: this.state.nextListId,
       name: 'Untitled',
       items: []
     };
     this.tps.clearAllTransactions();
-    if (this.hasTransactionToRedo()){
+    if (this.tps.hasTransactionToRedo()){
       document.getElementById("redo-button").style.color = 'white';
+      document.getElementById("redo-button").style.pointerEvents = "auto";
     }
     else{
         document.getElementById("redo-button").style.color = 'black';
+        document.getElementById("redo-button").style.pointerEvents = "none";
     }
-    if (this.hasTransactionToUndo()){
+    if (this.tps.hasTransactionToUndo()){
         document.getElementById("undo-button").style.color = 'white';
+        document.getElementById("undo-button").style.pointerEvents = "auto";
     }
     else{
         document.getElementById("undo-button").style.color = 'black';
+        document.getElementById("undo-button").style.pointerEvents = "none";
     }
     return newToDoList;
   }
@@ -204,10 +230,13 @@ class App extends Component {
       status: "incomplete",
       id: this.state.nextListItemId
     };
-    let items = this.state.currentList.items;
-    items.push(newToDoListItem);
+    let list = this.state.currentList;
+    list.items.push(newToDoListItem);
+    let todoList = this.state.toDoLists;
+    todoList[0] = list;
     this.setState({
-      currentList : {items},
+      toDoLists : todoList,
+      currentList : list,
       nextListItemId : this.state.nextListItemId+1
     })
 
@@ -215,53 +244,62 @@ class App extends Component {
   }
   
   moveItemUp = (id) => {
-    let items = this.state.currentList.items;
+    let list = this.state.currentList;
     var index;
-    for (var i = 0 ; i < items.length ; i++){
-      if (items[i].id == id){
+    for (var i = 0 ; i < list.items.length ; i++){
+      if (list.items[i].id == id){
           index = i;
       }
     }
-    if (index >0){
-      var temp = items[index-1];
-      items[index-1] = items[index];
-      items[index] = temp;
+    let todoList = this.state.toDoLists;
+    if (index > 0){
+      var temp = list.items[index-1];
+      list.items[index-1] = list.items[index];
+      list.items[index] = temp;
+      todoList[0] = list;
       this.setState({
-        currentList : {items}
+        toDoLists : todoList,
+        currentList : list
       })
     }
   }
 
 
   moveItemDown = (id) => {
-    let items = this.state.currentList.items;
+    let list = this.state.currentList;
     var index;
-    for (var i = 0 ; i < items.length ; i++){
-      if (items[i].id == id){
+    for (var i = 0 ; i < list.items.length ; i++){
+      if (list.items[i].id == id){
           index = i;
       }
     }
-    if (index < items.length - 1){
-      var temp = items[index+1];
-      items[index+1] = items[index];
-      items[index] = temp;
+    let todoList = this.state.toDoLists;
+    if (index < list.items.length - 1){
+      var temp = list.items[index+1];
+      list.items[index+1] = list.items[index];
+      list.items[index] = temp;
+      todoList[0] = list;
       this.setState({
-        currentList : {items}
+        toDoLists: todoList,
+        currentList : list
       })
     }
   }
 
   deleteItem = (id) => {
-    let items = this.state.currentList.items;
+    let list = this.state.currentList;
     var index;
-    for (var i = 0 ; i < items.length ; i++){
-      if (items[i].id == id){
+    for (var i = 0 ; i < list.items.length ; i++){
+      if (list.items[i].id == id){
           index = i;
       }
     }
-    items.splice(index,1);
+    list.items.splice(index,1);
+    let todoList = this.state.toDoLists;
+    todoList[0] = list;
     this.setState({
-      currentList : {items}
+      toDoLists : todoList,
+      currentList : list
     })
   }
 
@@ -283,6 +321,8 @@ class App extends Component {
     else{
         document.getElementById("undo-button").style.color = 'black';
     }
+    document.getElementById("add-list-button").style.color = 'yellow';
+    document.getElementById("add-list-button").style.pointerEvents = 'auto';
   }
 
   deleteList = () => {
@@ -313,6 +353,8 @@ class App extends Component {
     else{
         document.getElementById("undo-button").style.color = 'black';
     }
+    document.getElementById("add-list-button").style.color = 'yellow';
+    document.getElementById("add-list-button").style.pointerEvents = 'auto';
   }
 
   checkDeleteList = () => {
@@ -324,23 +366,29 @@ class App extends Component {
   }
 
   changeItem = (id, text, date, status) => { 
-    let items = this.state.currentList.items;
-    for (var i = 0 ; i < items.length ; i ++){
-      if (items[i].id === id){
-        items[i].description = text;
-        items[i].due_date = date;
-        items[i].status = status;
+    let list = this.state.currentList;
+    for (var i = 0 ; i < list.items.length ; i ++){
+      if (list.items[i].id === id){
+        list.items[i].description = text;
+        list.items[i].due_date = date;
+        list.items[i].status = status;
       }
     }
+    let todoList = this.state.toDoLists;
+    todoList[0] = list;
     this.setState({
-      currentList: {items}
+      toDoLists: todoList,
+      currentList: list
     })
   }
 
   insertItem(item, index){
     let list = this.state.currentList;
     list.items.splice(index, 0, item);
+    let todoList = this.state.toDoLists;
+    todoList[0] = list
     this.setState({
+      toDoLists: todoList,
       currentList: list
     })
   }
@@ -349,6 +397,16 @@ class App extends Component {
   }
   redo = () => {
     this.tps.doTransaction();
+  }
+  listNameChange = (name) => {
+    let currentList = this.state.currentList;
+    currentList.name = name;
+    let todoList = this.state.toDoLists;
+    todoList[0] = currentList;
+    this.setState({
+      toDoLists: todoList,
+      currentList : currentList
+    })
   }
 
   // THIS IS A CALLBACK FUNCTION FOR AFTER AN EDIT TO A LIST
@@ -371,8 +429,10 @@ class App extends Component {
         <Navbar />
         <LeftSidebar 
           toDoLists={this.state.toDoLists}
+          currentList = {this.state.currentList}
           loadToDoListCallback={this.loadToDoList}
           addNewListCallback={this.addNewList}
+          listNameChangeCallBack = {this.listNameChange}
 
         />
         <Workspace 

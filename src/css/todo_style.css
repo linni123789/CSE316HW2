@@ -123,32 +123,34 @@
 input[type="text"], textarea {
     color: #e9edf0;
     background-color: #40454e; 
-  
+    margin-bottom:1%;
+}
+.textchange{
+    margin-right: 18%;
+    height:62px;
 }
 input[type="date"], textarea {
     color: #e9edf0;
-    background-color: #40454e; 
+    background-color: #40454e;
+    margin-bottom:1%;
 }
 select, textarea {
     color: #e9edf0;
-    background-color: #40454e; 
+    background-color: #40454e;
+    margin-bottom:1%;
 }
-/* width */
-::-webkit-scrollbar {
-    width: 10px;
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #888;
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+.yellow {
+    color: yellow;
+}
+
+.todo-list-button:hover {
+    background-color: var(--swatch-contrast);
+}
+
+.todo-button:hover {
+    background-color: var(--swatch-contrast);
+}
+
+.list-item-card:hover{
+    background-color: var(--swatch-complement);
 }
