@@ -59,7 +59,7 @@
     position :absolute;
     text-align: center;
     height:80%;
-    width:100%;
+    width:90%;
     top: 8%;
 }
 
@@ -122,16 +122,23 @@
 }
 
 .task-col {
-    width:25%;
-    word-wrap: break-word;
+    width:26.2%;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
 
 .due-date-col {
-    width:25%;
+    width:26%;
+}
+
+.status-col{
+    width: 25%;
 }
 
 .status-col {
-    width:25%
+    width:25%;
+    word-wrap: break-word;
 }
 
 .list-controls-col {

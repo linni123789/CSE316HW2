@@ -238,7 +238,7 @@ class App extends Component {
       toDoLists : todoList,
       currentList : list,
       nextListItemId : this.state.nextListItemId+1
-    })
+    }, this.afterToDoListsChangeComplete);
 
     return newToDoListItem;
   }
@@ -260,7 +260,7 @@ class App extends Component {
       this.setState({
         toDoLists : todoList,
         currentList : list
-      })
+      }, this.afterToDoListsChangeComplete);
     }
   }
 
@@ -282,7 +282,7 @@ class App extends Component {
       this.setState({
         toDoLists: todoList,
         currentList : list
-      })
+      }, this.afterToDoListsChangeComplete);
     }
   }
 
@@ -300,7 +300,7 @@ class App extends Component {
     this.setState({
       toDoLists : todoList,
       currentList : list
-    })
+    }, this.afterToDoListsChangeComplete);
   }
 
   closeList = () => {
@@ -337,7 +337,7 @@ class App extends Component {
     this.setState({
       currentList : {items: []},
       toDoLists: alllists
-    })
+    }, this.afterToDoListsChangeComplete);
     this.disablebuttons();
     this.exitmodal();
     this.tps.clearAllTransactions();
@@ -379,7 +379,7 @@ class App extends Component {
     this.setState({
       toDoLists: todoList,
       currentList: list
-    })
+    }, this.afterToDoListsChangeComplete);
   }
 
   insertItem(item, index){
@@ -390,7 +390,7 @@ class App extends Component {
     this.setState({
       toDoLists: todoList,
       currentList: list
-    })
+    }, this.afterToDoListsChangeComplete);
   }
   undo = () =>{
     this.tps.undoTransaction();
@@ -406,7 +406,7 @@ class App extends Component {
     this.setState({
       toDoLists: todoList,
       currentList : currentList
-    })
+    }, this.afterToDoListsChangeComplete);
   }
 
   // THIS IS A CALLBACK FUNCTION FOR AFTER AN EDIT TO A LIST
@@ -415,7 +415,7 @@ class App extends Component {
 
     // WILL THIS WORK? @todo
     let toDoListsString = JSON.stringify(this.state.toDoLists);
-    localStorage.setItem("recent_work", toDoListsString);
+    localStorage.setItem("recentLists", toDoListsString);
   }
 
   render() {

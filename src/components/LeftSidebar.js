@@ -16,7 +16,6 @@ class LeftSidebar extends Component {
         console.log(id);
         console.log(this.props.currentList.id);
         if (id === this.props.currentList.id){
-            console.log("tRUASADSDADASD");
             return true;
         }
     }
